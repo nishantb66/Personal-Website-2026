@@ -72,3 +72,39 @@ export const EXPERIENCES = [
         description: "Created offline NLP chatbot solutions for enterprise deployment.",
     },
 ];
+
+export const AI_ENGINEERING = {
+    title: "Engineering with AI",
+    subtitle: "AI as a Force Multiplier",
+    sections: [
+        {
+            type: "hero",
+            text: "For me, Artificial Intelligence is not a replacement for engineering skill—it is a force multiplier for it."
+        },
+        {
+            type: "paragraph",
+            text: "As a full-stack developer, I view AI as an intelligent collaborator that enhances how I design systems, reason about complexity, and deliver production-ready solutions at scale. I use AI to accelerate learning curves, deconstruct complex problems, validate architectural decisions, and iterate on ideas with precision—allowing me to achieve 10× efficiency without compromising code quality or system robustness."
+        },
+        {
+            type: "paragraph",
+            text: "On the backend, AI helps me think deeply about system design, data flow, performance optimization, and edge cases, enabling faster prototyping while maintaining strong engineering fundamentals. On the frontend, it assists in refining UI/UX logic, interaction flows, accessibility, and visual consistency, ensuring that products are not only functional but intuitive and polished."
+        },
+        {
+            type: "highlight",
+            text: "Importantly, I do not treat AI as an answer generator. I treat it as a thinking amplifier—a tool that augments my decision-making while I remain fully accountable for correctness, scalability, and maintainability."
+        },
+        {
+            type: "paragraph",
+            text: "Every AI-assisted output is reviewed, refined, and aligned with real-world constraints and best practices."
+        },
+        {
+            type: "paragraph",
+            text: "AI allows me to shift my focus from repetitive tasks to higher-order problem solving: architecture, product thinking, performance trade-offs, and long-term maintainability. It enables me to move faster, think broader, and build smarter systems."
+        },
+        {
+            type: "conclusion",
+            main: "In short, AI is not what builds my projects—my engineering judgment does.",
+            sub: "AI simply ensures that my ideas move from concept to execution faster, cleaner, and with greater impact."
+        }
+    ]
+};

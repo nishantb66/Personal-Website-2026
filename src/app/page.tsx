@@ -247,6 +247,26 @@ export default function Home() {
                   <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <span className="text-xs md:text-sm text-muted-foreground">{PERSONAL_INFO.location}</span>
                 </div>
+
+                {/* AI Engineering Link */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  viewport={{ once: true }}
+                  className="pt-6 md:pt-8"
+                >
+                  <Link
+                    href="/ai-engineering"
+                    className="group inline-flex items-center gap-3 px-5 md:px-6 py-2.5 md:py-3 bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-full font-medium transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
+                    data-hover
+                  >
+                    <span className="text-sm md:text-base bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                      Engineering with AI
+                    </span>
+                    <ArrowUpRight className="w-4 h-4 text-primary transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </Link>
+                </motion.div>
               </div>
 
               <div className="space-y-6 md:space-y-8">
