@@ -21,21 +21,20 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nishant Baruah | Backend Engineer Portfolio",
+  title: "Nishant Baruah — Engineer & Tech Builder",
   description:
-    "Portfolio of Nishant Baruah, a backend engineer building scalable systems, ML-enabled products, and production web platforms.",
+    "Nishant Baruah builds purposeful digital systems across software engineering, AI, and product thinking.",
   keywords: [
     "Nishant Baruah",
-    "Backend Engineer",
-    "Full Stack Developer",
-    "Machine Learning",
+    "Software Engineer",
+    "AI Engineer",
     "Portfolio",
   ],
   authors: [{ name: "Nishant Baruah" }],
   openGraph: {
-    title: "Nishant Baruah | Backend Engineer Portfolio",
+    title: "Nishant Baruah — Engineer & Tech Builder",
     description:
-      "Backend engineering portfolio featuring production systems, AI projects, and scalable product architecture.",
+      "Purposeful digital systems, built with clarity, curiosity, and conviction.",
     type: "website",
   },
 };
@@ -52,8 +51,7 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          forcedTheme="dark"
+          defaultTheme="light"
           enableSystem={false}
         >
           {children}

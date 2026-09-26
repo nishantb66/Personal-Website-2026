@@ -1,357 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { motion, useScroll, useSpring } from "framer-motion";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Download,
-  Github,
-  Linkedin,
-  Mail,
-  MapPin,
-  Menu,
-  X,
-  Sparkles,
-  Briefcase,
-} from "lucide-react";
-import {
-  EXPERIENCES,
-  PERSONAL_INFO,
-  PROJECTS,
-  SKILLS,
-  SOCIAL_LINKS,
-} from "@/lib/constants";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
+import { ArrowDown, ArrowRight, ArrowUpRight, Download, Github, Linkedin, Mail, Menu, X } from "lucide-react";
+import { ModeToggle } from "@/components/theme-toggle";
+import { EXPERIENCES, PERSONAL_INFO, PROJECTS, SKILLS, SOCIAL_LINKS } from "@/lib/constants";
+import "./portfolio.css";
 
-const sections = [
-  { id: "about", label: "About" },
-  { id: "work", label: "Work" },
-  { id: "experience", label: "Experience" },
-  { id: "contact", label: "Contact" },
+const navigation = [
+  { label: "About", href: "#about" },
+  { label: "Work", href: "#work" },
+  { label: "Experience", href: "#experience" },
+  { label: "Contact", href: "#contact" },
 ];
 
-const projectImages = ["/projects/chatbot.jpg", "/projects/accident-analysis.jpg"];
+function Parallax({ children, className = "", distance = 50 }: { children: React.ReactNode; className?: string; distance?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], [distance, -distance]);
+  return <motion.div ref={ref} className={className} style={reduced ? undefined : { y }} initial={reduced ? false : { opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>;
+}
+
+function Index({ number, label }: { number: string; label: string }) {
+  return <div className="p-index"><span>{number} / 04</span><span>{label}</span></div>;
+}
+
+function ProjectVisual({ index }: { index: number }) {
+  return <div className={`p-project-art p-art-${index}`} aria-hidden="true"><div className="p-art-grid" />{index === 0 ? <div className="p-chat"><div className="p-chat-head">ONGC / INTELLIGENCE SYSTEM <span>● LOCAL</span></div><div className="p-chat-lines"><i /><i /><i /></div><div className="p-chat-input">How can I help you today? <span>↗</span></div></div> : <><div className="p-orbit p-orbit-one" /><div className="p-orbit p-orbit-two" /><div className="p-orbit p-orbit-three" /><div className="p-orbit-core">AI<small>ANALYSIS</small></div><span className="p-data-label p-label-one">INCIDENT<br />DETECTION</span><span className="p-data-label p-label-two">SYSTEM<br />INTELLIGENCE</span></>}<span className="p-art-caption">0{index + 1} / {index === 0 ? "CONVERSATIONAL INTELLIGENCE" : "SAFETY INTELLIGENCE"}</span></div>;
+}
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 32 });
+  const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 25 });
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroTextY = useTransform(heroProgress, [0, 1], [0, 170]);
+  const heroArtY = useTransform(heroProgress, [0, 1], [0, -130]);
+  const heroOpacity = useTransform(heroProgress, [0, 0.9], [1, 0]);
 
-  return (
-    <main className="page-shell">
-      <motion.div
-        className="fixed left-0 top-0 z-[60] h-[2px] w-full origin-left bg-gradient-to-r from-accent via-primary to-accent"
-        style={{ scaleX }}
-      />
-
-      <header className="fixed left-0 right-0 top-0 z-50 px-3 py-3 md:px-6 md:py-5">
-        <div className="container-tight panel flex items-center justify-between px-4 py-3 md:px-6">
-          <Link href="/" className="text-sm font-semibold tracking-[0.17em] uppercase">
-            Nishant Baruah
-          </Link>
-
-          <nav className="hidden items-center gap-7 md:flex">
-            {sections.map((section) => (
-              <a key={section.id} href={`#${section.id}`} className="nav-link">
-                {section.label}
-              </a>
-            ))}
-          </nav>
-
-          <button
-            onClick={() => setMenuOpen((v) => !v)}
-            className="inline-flex items-center justify-center rounded-full border border-white/15 p-2 md:hidden"
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-          </button>
-        </div>
-
-        {menuOpen && (
-          <div className="container-tight panel mt-2 p-3 md:hidden">
-            <div className="flex flex-col gap-1">
-              {sections.map((section) => (
-                <a
-                  key={section.id}
-                  href={`#${section.id}`}
-                  onClick={() => setMenuOpen(false)}
-                  className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-                >
-                  {section.label}
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-      </header>
-
-      <section className="relative overflow-hidden px-3 pb-16 pt-32 md:px-6 md:pb-24 md:pt-40">
-        <div className="orb orb-gold right-[-9%] top-16" />
-        <div className="orb orb-teal left-[-13%] top-32" />
-
-        <div className="container-tight">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="space-y-8"
-          >
-            <span className="kicker">{PERSONAL_INFO.role}</span>
-
-            <div className="space-y-5">
-              <h1 className="display-hero">
-                Building resilient systems,
-                <br />
-                <span className="font-serif italic text-primary">
-                  engineered for impact.
-                </span>
-              </h1>
-              <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-                I design and build backend architectures, ML-enabled products, and
-                modern web platforms that prioritize reliability, performance, and
-                business outcomes.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <a href="#work" className="cta-primary inline-flex items-center gap-2">
-                View selected work <ArrowRight className="h-4 w-4" />
-              </a>
-              <a
-                href={PERSONAL_INFO.resumePath}
-                download
-                className="cta-ghost inline-flex items-center gap-2"
-              >
-                <Download className="h-4 w-4" /> Resume
-              </a>
-              <Link href="/ai-engineering" className="cta-ghost inline-flex items-center gap-2">
-                <Sparkles className="h-4 w-4" /> Engineering with AI
-              </Link>
-            </div>
-
-            <div className="grid gap-4 pt-4 md:grid-cols-3">
-              <div className="panel p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  Base
-                </p>
-                <p className="mt-1 text-sm leading-relaxed">{PERSONAL_INFO.location}</p>
-              </div>
-              <div className="panel p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  Focus
-                </p>
-                <p className="mt-1 text-sm leading-relaxed">
-                  Scalable APIs, automation, data-rich product systems
-                </p>
-              </div>
-              <div className="panel p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  Current role
-                </p>
-                <p className="mt-1 text-sm leading-relaxed">Backend Developer at LenDenClub</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      <section id="about" className="px-3 py-16 md:px-6 md:py-24">
-        <div className="container-tight grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="space-y-6">
-            <span className="kicker">About</span>
-            <h2 className="display-xl">A technical builder with product-first discipline.</h2>
-            <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
-              I&apos;m a Computer Engineering student at NMIMS who enjoys turning
-              complex requirements into reliable production systems. My internship
-              work across fintech and enterprise organizations taught me to balance
-              speed, quality, and maintainability from day one.
-            </p>
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4" /> {PERSONAL_INFO.location}
-            </div>
-          </div>
-
-          <div className="panel p-6 md:p-8">
-            <p className="mb-4 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Core stack
-            </p>
-            <div className="flex flex-wrap gap-2.5">
-              {SKILLS.map((skill) => (
-                <span key={skill} className="chip">
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="work" className="px-3 py-16 md:px-6 md:py-24">
-        <div className="container-tight space-y-10">
-          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-            <div className="space-y-4">
-              <span className="kicker">Selected Work</span>
-              <h2 className="display-xl">
-                Projects where architecture meets
-                <span className="font-serif italic text-primary"> practical intelligence</span>
-              </h2>
-            </div>
-            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Each project focuses on measurable outcomes, robust implementation,
-              and clear product utility.
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            {PROJECTS.map((project, index) => (
-              <motion.a
-                key={project.title}
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="panel group overflow-hidden"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.55, delay: index * 0.1 }}
-              >
-                <div className="relative h-52 overflow-hidden md:h-60">
-                  <Image
-                    src={projectImages[index]}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/35 to-transparent" />
-                </div>
-
-                <div className="space-y-4 p-5 md:p-6">
-                  <div className="flex items-center justify-between text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                    <span>{project.company}</span>
-                    <span>{project.year}</span>
-                  </div>
-
-                  <h3 className="display-lg">{project.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
-                    {project.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2">
-                    {project.tech.map((tech) => (
-                      <span key={tech} className="chip">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  <span className="inline-flex items-center gap-2 text-sm font-medium text-primary">
-                    Explore project <ArrowUpRight className="h-4 w-4" />
-                  </span>
-                </div>
-              </motion.a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="experience" className="px-3 py-16 md:px-6 md:py-24">
-        <div className="container-tight space-y-10">
-          <div className="space-y-4">
-            <span className="kicker">Experience</span>
-            <h2 className="display-xl">Professional journey across enterprise and product teams.</h2>
-          </div>
-
-          <div className="relative border-l border-border/80 pl-5 md:pl-8">
-            {EXPERIENCES.map((experience, index) => (
-              <motion.article
-                key={`${experience.company}-${experience.role}`}
-                className="relative mb-6 panel p-5 md:p-7"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: index * 0.08 }}
-              >
-                <span className="absolute -left-[1.87rem] top-8 hidden h-2.5 w-2.5 rounded-full bg-accent md:block" />
-
-                <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                  <span className="inline-flex items-center gap-2">
-                    <Briefcase className="h-3.5 w-3.5" /> {experience.company}
-                  </span>
-                  <span>{experience.period}</span>
-                  {experience.current && (
-                    <span className="rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold text-primary-foreground">
-                      Current
-                    </span>
-                  )}
-                </div>
-                <h3 className="mt-3 text-xl font-semibold md:text-2xl">{experience.role}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
-                  {experience.description}
-                </p>
-              </motion.article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="contact" className="px-3 pb-14 pt-16 md:px-6 md:pb-20 md:pt-24">
-        <div className="container-tight panel p-6 md:p-10">
-          <div className="space-y-5">
-            <span className="kicker">Contact</span>
-            <h2 className="display-xl">Let&apos;s design and ship something that lasts.</h2>
-            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              I&apos;m open to internships, full-time engineering opportunities, and
-              high-ownership freelance projects where product quality matters.
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <a
-              href={SOCIAL_LINKS.email.url}
-              className="cta-ghost inline-flex items-center justify-center gap-2"
-            >
-              <Mail className="h-4 w-4" /> Email
-            </a>
-            <a
-              href={SOCIAL_LINKS.linkedin.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cta-ghost inline-flex items-center justify-center gap-2"
-            >
-              <Linkedin className="h-4 w-4" /> LinkedIn
-            </a>
-            <a
-              href={SOCIAL_LINKS.github.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cta-ghost inline-flex items-center justify-center gap-2"
-            >
-              <Github className="h-4 w-4" /> GitHub
-            </a>
-            <a
-              href={PERSONAL_INFO.resumePath}
-              download
-              className="cta-primary inline-flex items-center justify-center gap-2"
-            >
-              <Download className="h-4 w-4" /> Resume
-            </a>
-          </div>
-
-          <div className="mt-8 flex items-center gap-3 text-sm text-muted-foreground">
-            <span className="accent-dot" /> Usually replies within 24 hours
-          </div>
-        </div>
-      </section>
-
-      <footer className="px-3 pb-8 md:px-6 md:pb-10">
-        <div className="container-tight flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-5 text-xs text-muted-foreground">
-          <p>© 2026 Nishant Baruah</p>
-          <p>Crafted with Next.js and a systems-first design mindset.</p>
-        </div>
-      </footer>
-    </main>
-  );
+  return <main className="portfolio" id="top">
+    <motion.div className="p-progress" style={{ scaleX: progress }} />
+    <a className="p-skip" href="#about">Skip to content</a>
+    <header className="p-header"><Link className="p-logo" href="/" aria-label="Nishant Baruah home">N<span>.</span>B<span>.</span></Link><nav className="p-nav" aria-label="Primary navigation">{navigation.map(item => <a key={item.href} href={item.href}>{item.label}</a>)}</nav><div className="p-header-actions"><span className="p-available"><i /> Available for select projects</span><ModeToggle /><button className="p-menu" type="button" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button></div>{menuOpen && <nav className="p-mobile-nav" aria-label="Mobile navigation">{navigation.map(item => <a key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}<ArrowUpRight /></a>)}</nav>}</header>
+    <section className="p-hero" ref={heroRef} aria-labelledby="hero-heading"><div className="p-hero-grid" /><motion.div className="p-hero-art" aria-hidden="true" style={reduced ? undefined : { y: heroArtY, opacity: heroOpacity }}><div className="p-disc"><div /></div><span className="p-cross p-cross-one">+</span><span className="p-cross p-cross-two">+</span></motion.div><div className="p-hero-meta"><span>INDEPENDENT ENGINEER / PORTFOLIO 2026</span><span>NAVI MUMBAI, INDIA ↗</span></div><motion.div className="p-hero-content" style={reduced ? undefined : { y: heroTextY, opacity: heroOpacity }}><p className="p-kicker"><span className="p-kicker-line" /> TECHNOLOGY. INTENTION. IMPACT.</p><h1 id="hero-heading">Building <em>what&apos;s</em><br /><span>next.</span></h1><div className="p-hero-bottom"><p>I&apos;m <strong>Nishant Baruah</strong> — a tech builder turning complex ideas into purposeful digital systems.</p><a href="#work" className="p-round-link" aria-label="Explore selected work"><ArrowDown /></a></div></motion.div><div className="p-hero-foot"><span>SCROLL TO EXPLORE</span><span>01 — 04</span></div></section>
+    <div className="p-marquee" aria-hidden="true"><div>{Array.from({ length: 4 }, (_, i) => <span key={i}>ENGINEERING <b>✦</b> INTELLIGENCE <b>✦</b> EXPERIENCE <b>✦</b> </span>)}</div></div>
+    <section className="p-section p-about" id="about" aria-labelledby="about-heading"><Index number="01" label="THE INTRODUCTION" /><div className="p-about-layout"><Parallax className="p-about-side" distance={40}><span>✦</span><small>GOOD IDEAS DESERVE<br />EXCEPTIONAL EXECUTION.</small></Parallax><Parallax className="p-about-main" distance={24}><p className="p-kicker">A LITTLE ABOUT ME</p><h2 id="about-heading">I build with<br /><em>clarity,</em> curiosity,<br />and conviction.</h2><div className="p-about-copy"><p>{PERSONAL_INFO.description}</p><p>From intelligent interfaces to reliable infrastructure, I care about the decisions behind the product as much as the experience in front of it.</p></div><a className="p-text-link" href={PERSONAL_INFO.resumePath} target="_blank" rel="noopener noreferrer">Explore my résumé <Download size={17} /></a></Parallax></div><Parallax className="p-capabilities" distance={18}><span>WHAT I WORK WITH</span><div>{["Software engineering", "AI & machine learning", "Product thinking", "Scalable systems"].map(item => <span key={item}>{item}</span>)}</div></Parallax></section>
+    <section className="p-section p-work" id="work" aria-labelledby="work-heading"><Index number="02" label="SELECTED WORK" /><div className="p-heading"><Parallax distance={28}><p className="p-kicker">IDEAS MADE REAL</p><h2 id="work-heading">Selected <em>work.</em></h2></Parallax><Parallax className="p-heading-aside" distance={15}>Practical, ambitious work at the intersection of engineering and intelligence. <span>↓</span></Parallax></div><div className="p-projects">{PROJECTS.map((project, index) => <article className="p-project" key={project.title}><Parallax className="p-project-visual" distance={index === 0 ? 25 : 40}><a href={project.link} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} project`}><ProjectVisual index={index} /><span className="p-project-open"><ArrowUpRight /></span></a></Parallax><Parallax className="p-project-info" distance={17}><span className="p-project-index">0{index + 1} / {project.year}</span><div><p>{project.company} / FEATURED PROJECT</p><h3>{project.title}</h3><p className="p-project-description">{project.description}</p></div><div className="p-project-tech">{project.tech.map(tech => <span key={tech}>{tech}</span>)}</div></Parallax></article>)}</div><a className="p-all-work" href={SOCIAL_LINKS.github.url} target="_blank" rel="noopener noreferrer">MORE EXPERIMENTS ON GITHUB <ArrowUpRight /></a></section>
+    <section className="p-manifesto" aria-label="Approach"><div className="p-manifesto-grid" /><Parallax className="p-manifesto-small" distance={55}><span>THE WAY I SEE IT</span><span>✦</span></Parallax><Parallax className="p-manifesto-statement" distance={30}><p>Technology should feel <em>effortless.</em><br />The thinking behind it never is.</p></Parallax><Parallax className="p-manifesto-end" distance={18}>DESIGNED TO MATTER. BUILT TO LAST. <span>↗</span></Parallax></section>
+    <section className="p-section p-experience" id="experience" aria-labelledby="experience-heading"><Index number="03" label="THE JOURNEY" /><div className="p-heading"><Parallax distance={25}><p className="p-kicker">WHERE I&apos;VE MADE AN IMPACT</p><h2 id="experience-heading">A path of <em>progress.</em></h2></Parallax></div><div className="p-experience-list">{EXPERIENCES.map((job, index) => <Parallax className="p-experience-row" distance={index % 2 ? 30 : 18} key={job.company}><span>0{index + 1}</span><div><h3>{job.role}</h3><p>{job.description}</p></div><span>{job.company}</span><span>{job.period}</span><ArrowUpRight /></Parallax>)}</div><Parallax className="p-skill-line" distance={18}><span>TOOLKIT /</span><p>{SKILLS.slice(0, 10).join(" · ")}</p></Parallax></section>
+    <section className="p-section p-ai" aria-labelledby="ai-heading"><Parallax className="p-ai-symbol" distance={40}>✦</Parallax><Parallax className="p-ai-copy" distance={25}><p className="p-kicker">BEYOND THE TOOLKIT</p><h2 id="ai-heading">Engineering<br />with <em>intelligence.</em></h2><p>I use AI to expand the space of what&apos;s possible, while keeping human judgment at the center of every decision.</p><Link className="p-text-link" href="/ai-engineering">Explore my approach <ArrowUpRight size={17} /></Link></Parallax><span className="p-ai-note">HUMAN JUDGMENT / MACHINE INTELLIGENCE</span></section>
+    <section className="p-contact" id="contact" aria-labelledby="contact-heading"><Index number="04" label="LET&apos;S CONNECT" /><Parallax className="p-contact-main" distance={30}><p className="p-kicker">HAVE SOMETHING IN MIND?</p><h2 id="contact-heading">Let&apos;s make<br /><em>it happen.</em></h2><a href={SOCIAL_LINKS.email.url} className="p-contact-button">Start a conversation <ArrowUpRight /></a></Parallax><div className="p-contact-bottom"><span>IDEAS ARE BETTER IN MOTION.</span><div><a href={SOCIAL_LINKS.linkedin.url} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Linkedin /></a><a href={SOCIAL_LINKS.github.url} target="_blank" rel="noopener noreferrer" aria-label="GitHub"><Github /></a><a href={SOCIAL_LINKS.email.url} aria-label="Email"><Mail /></a></div></div></section>
+    <footer className="p-footer"><span>© 2026 NISHANT BARUAH</span><span>BUILT WITH INTENTION <ArrowRight size={12} /></span><a href="#top">BACK TO TOP ↑</a></footer>
+  </main>;
 }
